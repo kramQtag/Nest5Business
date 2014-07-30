@@ -931,7 +931,11 @@ public class Initialactivity extends FragmentActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
+		Log.i("MIS PRUEBAS", item.getItemId() + "");
 		switch (item.getItemId()) {
+		case R.id.logout:
+			logout();
+			return true;
 		case R.id.menu_add:
 			showAddItemDialog();
 			return true;
@@ -3695,7 +3699,7 @@ public static class MHandler extends Handler {
 
 		return bufferString;
 	}
-
+	
 	private void checkLogin() {
 		prefs = Util.getSharedPreferences(mContext);
 		if (!prefs.getBoolean(Setup.LOGGED_IN, false)) {
@@ -5408,6 +5412,8 @@ public static class MHandler extends Handler {
 		int nextsale = addSale(); //se aumenta el valor de facturación, //si falla se resta un numero de las ventas actuales mas adelante,.
 		Sale createdSale = null;
 		long saveDate = System.currentTimeMillis();
+		prefs = Util.getSharedPreferences(mContext);
+		int sellerId = prefs.getInt(Setup.SELLER_ID, -1);
 		LinkedHashMap<Registrable,Integer> currentSale = currentOrder;
 		if(number > 0){
 			createdSale = saleDataSource.createSale(saveDate,
@@ -5418,7 +5424,8 @@ public static class MHandler extends Handler {
 					togo,
 					tip,
 					discount,
-					nextsale);
+					nextsale,
+					sellerId);
 			
 		}
 		else{
@@ -5918,7 +5925,27 @@ public static class MHandler extends Handler {
 	}
 
 	
-	
+	private void logout(){
+		prefs = Util.getSharedPreferences(mContext);
+		prefs.edit().putBoolean(Setup.LOGGED_IN, false)
+			.putString(Setup.COMPANY_ID, "0")
+			.putString(Setup.COMPANY_NAME, "N/A")
+			.putString(Setup.DEVICE_REGISTERED_ID, "0")
+			.putString(Setup.COMPANY_EMAIL, "N/A")
+			.putString(Setup.COMPANY_TEL, "0")
+			.putString(Setup.COMPANY_USERNAME, "N/A")
+			.putString(Setup.SELLER_NAME, "N/A")
+			.putInt(Setup.SELLER_ID, 0)
+			.putString(Setup.SELLER_PHONE, "N/A")
+			.putString(Setup.SELLER_IDENTIFICATION, "N/A")
+			.putString(Setup.SELLER_EMAIL, "N/A")
+			.putBoolean(Setup.SELLER_ACTIVE, false)
+			.putString(Setup.SELLER_DATE, "N/A")
+			.commit();
+		
+		Intent inten = new Intent(mContext, LoginActivity.class);
+		startActivity(inten);
+	}
 	
 	
 	
